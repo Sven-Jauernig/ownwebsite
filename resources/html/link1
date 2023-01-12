@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='../css/style.css'>
+    <script src='../js/script.js'></script>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <a href="https://de.cleanpng.com/png-abdoxr/" target="_blank"><img src="../images/logo.png" alt="logo"></a>
+            <h1>Here should be your logo</h1>
+        </div>
+        <div class="nav-links">
+            <div><a href="../../index.html">
+                    <h1>index</h1>
+                </a></div>
+            <div><a href="link1.html" id="thispage">
+                    <h1>Link1</h1>
+                </a></div>
+            <div><a href="link2.html">
+                    <h1>Link2</h1>
+                </a></div>
+            <div><a href="link3.html">
+                    <h1>Link3</h1>
+                </a></div>
+        </div>
+    </nav>
+
+    <h1>test</h1>
+
+
+    <footer>
+        <div class="footer-start">
+            <h3> &copy; Copyright now</h3>
+        </div>
+        <div class="footer-end">
+            <div><a href="">
+                    <h3>Contact</h3>
+                </a></div>
+            <div><a href="">
+                    <h3>About</h3>
+                </a></div>
+            <div><a href="">
+                    <h3>Privacy Polocy</h3>
+                </a></div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
