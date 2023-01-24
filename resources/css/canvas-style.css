@@ -1,0 +1,48 @@
+body {
+    background-color: black;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    
+}
+
+.outer{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: none;
+
+    
+}
+ #startButton{
+    height: 10vh;
+    width: 20vw;
+    border-radius: 20px;
+    background-color: rgba(200, 200, 200 ,0.6);
+    color: white;
+ }
+ #startButton:hover{
+    background-color: rgba(200, 0, 0 ,0.6);
+    
+ }
+ canvas{
+    
+    background-color: rgba(200, 200, 200,0.3);
+    border-radius: 5px;
+    border: 5px solid white;
+    /* display: none; */
+ }
