@@ -48,6 +48,7 @@ function Circle(xPos, yPos, radius) {
 
         ctx.beginPath();
         ctx.arc(this.xPos, this.yPos, this.radius, 0, 2 * Math.PI, false);
+        ctx.strokeStyle = "deeppink";
         ctx.stroke();
 
     };
