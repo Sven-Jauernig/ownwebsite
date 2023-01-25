@@ -1,8 +1,7 @@
-var canvas = <HTMLCanvasElement>document.getElementById('board');
-var ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+let canvas = <HTMLCanvasElement>document.getElementById('board');
 
-var canvas2 = <HTMLCanvasElement>document.getElementById('board2');
-var ctx2: CanvasRenderingContext2D = canvas2.getContext('2d');
+let ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+let ctx2: CanvasRenderingContext2D = canvas.getContext('2d');
 
 const canvasWidth: number = innerWidth * 0.9;
 const canvasHeight: number = innerHeight * 0.9;
@@ -12,139 +11,162 @@ let gameStatus: boolean = true;
 
 ctx.canvas.width = canvasWidth;
 ctx.canvas.height = canvasHeight;
-
-// let enemies :any = []; 
-
-
-
-// createEnemie();
-
-// function createEnemie() {
-
-//     var size = Math.floor(Math.random() * (50) + 20);
-//     var newEnemie: { yPos: number, size: number, speed: number } = new Enemie(
-//         Math.floor(Math.random() * (canvasHeight)),
-//         size,
-//         Math.floor(Math.random() * (20) + 1),
-//     );
-
-//     enemies.push(newEnemie);
-// }
-
-
-// function Enemie(yPos: number, size: number, speed: number) {
-//     this.yPos = yPos;
-//     this.size = size;
-//     this.speed = -speed;
-//     this.xPos = canvasWidth;
-
-//     this.enemieUpdate = function () {
-//         this.enemieColider();
-//         this.enemieMove();
-//         this.enemieDraw();
-//     };
-
-//     this.enemieMove = function () {
-//         this.xPos += this.speed;
-//     };
-
-//     this.enemieDraw = function () {
-//         ctx.beginPath();
-//         ctx.arc(this.xPos, this.yPos, this.size, 0, 2 * Math.PI, false);
-//         ctx.strokeStyle = "white";
-//         ctx.stroke();
-//     };
-
-//     this.enemieColider = function () {
-//         this.xPos + this.size <= 0 ? gameStatus = false : null;
-//     }
-// }
-
-
-// draw();
-
-// function draw() : void {
-//     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-
-//     for (var i = 0; i < enemies.length; i++) {
-//         enemies[i].enemieUpdate();
-//         console.log(gameStatus);
-//     }
-
-//     window.requestAnimationFrame(draw);
-// }
-
-
-
-
-    // ========== Shots ========== //
-
 ctx2.canvas.width = canvasWidth;
 ctx2.canvas.height = canvasHeight;
 
+let enemies: any = [];
 let shots: any = [];
 
 
-// ctx2.beginPath();
-        ctx2.arc(1000, 200, 20, 0, 2 * Math.PI, false);
+
+
+function createEnemy(): void {
+
+    let size = Math.floor(Math.random() * (50) + 20);
+    let newEnemy: { yPos: number, size: number, speed: number } = new Enemy(
+        Math.floor(Math.random() * (canvasHeight)),
+        size,
+        Math.floor(Math.random() * (5) + 1),
+    );
+    enemies.push(newEnemy);
+}
+
+function createShot(): void {
+
+    let size = Math.floor(Math.random() * (50) + 20);
+    let newShot = new Shot(
+        Math.floor(Math.random() * (canvasHeight)),
+        size,
+        Math.floor(Math.random() * (5) + 1),
+    );
+    shots.push(newShot);
+}
+
+
+class Enemy {
+
+    yPos: number;
+    size: number;
+    speed: number;
+    xPos: number;
+    isHit: boolean;
+
+    constructor(yPos: number, size: number, speed: number) {
+
+        this.xPos = canvasWidth;
+        this.isHit = false;
+        this.yPos = yPos;
+        this.size = size;
+        this.speed = -speed;
+
+
+    }
+
+    enemyUpdate = function () {
+        this.enemyColider();
+        this.enemyMove();
+        this.enemyDraw();
+    };
+
+    enemyMove = function () {
+        this.xPos += this.speed;
+    };
+
+    enemyDraw = function () {
+        ctx.beginPath();
+        ctx.arc(this.xPos, this.yPos, this.size, 0, 2 * Math.PI, false);
+        ctx.strokeStyle = "deeppink";
+        ctx.stroke();
+    };
+
+    enemyColider = function () {
+        this.xPos + this.size <= 0 ? gameStatus = false : null;
+
+        for (let i = 0; i < shots.length; i++) {
+            if (this.xPos + this.size >= shots[i].xPos - shots[i].size && this.xPos + this.size <= shots[i].xPos + shots[i].size && this.yPos + this.size >= shots[i].yPos - shots[i].size && this.yPos + this.size <= shots[i].yPos + shots[i].size) {
+                
+                
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                
+                if (this.isHit === false){
+                this.isHit = true;
+                enemies[i] = { x: 0, y: 0, status: 1 };
+                enemies.splice(i, 1);}
+                
+            }
+        }
+    }
+}
+console.log(Enemy);
+
+
+
+class Shot {
+
+    yPos: number;
+    size: number;
+    speed: number;
+    xPos: number;
+
+    constructor(yPos, size, speed) {
+        this.yPos = yPos;
+        this.size = size;
+        this.speed = speed;
+        this.xPos = 0;
+    }
+
+    shotUpdate = function () {
+        this.shotColider();
+        this.shotMove();
+        this.shotDraw();
+    };
+
+    shotMove = function () {
+        this.xPos += this.speed;
+    };
+
+    shotDraw = function () {
+        ctx2.beginPath();
+        ctx2.arc(this.xPos, this.yPos, this.size, 0, 2 * Math.PI, false);
         ctx2.strokeStyle = "white";
         ctx2.stroke();
+    };
 
-// createShot();
+    shotColider = function () {
+        this.xPos + this.size >= canvasWidth ? gameStatus = false : null;
+    }
+}
 
-// function createShot() {
+function draw() {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-//     var size = Math.floor(Math.random() * (50) + 20);
-//     var newShot: { yPos: number, size: number, speed: number } = new Shot(
-//         Math.floor(Math.random() * (canvasHeight)),
-//         size,
-//         Math.floor(Math.random() * (20) + 1),
-//     );
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].enemyUpdate();
+        console.log(enemies.length);
+        for (let j = 0; j < shots.length; j++) {
+            shots[j].shotUpdate();
+        }
+    }
 
-//     shots.push(newShot);
-// }
+}
 
+setInterval(() => {
+    draw(), 500;
+});
 
-// function Shot(yPos: number, size: number, speed: number) {
-//     this.yPos = yPos;
-//     this.size = size;
-//     this.speed = speed;
-//     this.xPos = 0;
-
-//     this.shotUpdate = function () {
-//         this.shotColider();
-//         this.shotMove();
-//         this.shotDraw();
-//     };
-
-//     this.shotMove = function () {
-//         this.xPos += this.speed;
-//     };
-
-//     this.shotDraw = function () {
-//         ctx2.beginPath();
-//         ctx2.arc(this.xPos, this.yPos, this.size, 0, 2 * Math.PI, false);
-//         ctx2.strokeStyle = "white";
-//         ctx2.stroke();
-//     };
-
-//     this.shotColider = function () {
-//         this.xPos + this.size >= canvasWidth ? gameStatus = false : null;
-//     }
-// }
+createShot();
+createShot();
+createShot();
+createShot();
+createShot();
+createShot();
+createEnemy();
+createEnemy();
+createEnemy();
+createEnemy();
+createEnemy();
+createEnemy();
 
 
-// draw2();
-
-// function draw2() : void {
-//     ctx2.clearRect(0, 0, canvasWidth, canvasHeight);
-
-
-//     for (var i = 0; i < shots.length; i++) {
-//         shots[i].shotUpdate();
-//         console.log(gameStatus);
-//     }
-
-//     window.requestAnimationFrame(draw2);
-// }
+console.log(enemies)
+// ========== Shots ========== //
