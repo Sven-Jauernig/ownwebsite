@@ -14,13 +14,22 @@ const canvasWidth: number = innerWidth * 0.9,
     canvasDiv: HTMLElement = document.getElementById("canvasDiv"),
     winloseScreen: HTMLElement = document.getElementById("winloseScreen"),
     highscoreHTML: HTMLElement = document.querySelector("body .outer .inner ul li h3"),
+    easyButton: HTMLElement = document.getElementById("difficultyEasy"),
+    mediumButton: HTMLElement = document.getElementById("difficultyMedium"),
+    hardButton: HTMLElement = document.getElementById("difficultyHard"),
+    extremeButton: HTMLElement = document.getElementById("difficultyExtreme"),
+    difficultyText: HTMLElement = document.querySelector(".outer .inner details summary h2"),
     menu: HTMLElement = document.getElementById("menu"),
     nav: HTMLElement = document.getElementById("nav"),
+    outer: HTMLElement = document.getElementById("outer"),
     button: HTMLElement = document.getElementById("burger");
 
 startButton.addEventListener("click", start);
 button.addEventListener("click", burgermenu);
-
+easyButton.addEventListener("click", function () { difficulty("easy") });
+mediumButton.addEventListener("click", function () { difficulty("medium") });
+hardButton.addEventListener("click", function () { difficulty("hard") });
+extremeButton.addEventListener("click", function () { difficulty("extreme") });
 
 ctx.canvas.width = canvasWidth;
 ctx.canvas.height = canvasHeight;
@@ -30,6 +39,7 @@ ctx2.canvas.height = canvasHeight;
 let gameStatus: boolean = true,
     enemieIntervalTimer: number = 3000,
     score: number = 0,
+    speed: number = 1,
     playerHeight: number = 0.5 * canvasHeight,
     enemies: any = [],
     shots: any = [],
@@ -37,6 +47,9 @@ let gameStatus: boolean = true,
     highscoreName: string = "Name",
     everageHighscoreName: string = "",
     highscore: number = 0;
+
+
+
 
 // ========== Player ========== //
 
@@ -81,6 +94,7 @@ function createEnemy(): void {
         newEnemy: { yPos: number, size: number, speed: number } = new Enemy(
             Math.floor(Math.random() * (canvasHeight)),
             size,
+            speed,
         );
     enemies.push(newEnemy);
 }
@@ -93,13 +107,13 @@ class Enemy {
     xPos: number;
     isHit: boolean;
 
-    constructor(yPos: number, size: number) {
+    constructor(yPos: number, size: number, speed: number) {
 
         this.xPos = canvasWidth;
         this.isHit = false;
         this.yPos = yPos;
         this.size = size;
-        this.speed = -1;
+        this.speed = -speed;
     }
 
     enemyUpdate = function () {
@@ -137,6 +151,8 @@ class Enemy {
                             enemies.splice(j, 1);
                             shots.splice(i, 1);
                             score += 1;
+                            enemieIntervalTimer *= (1 - (score / 1000));
+
                         }
                     }
                 }
@@ -221,62 +237,43 @@ function draw() {
 function startInterval() {
 
     let drawInterval = setInterval(() => {
-
         if (!gameStatus) {
-            enemies.splice(gameStatus[1], 1);
             clearInterval(drawInterval);
-            canvasDiv.setAttribute("style", "display: none;");
-            winloseScreen.setAttribute("style", "display: block;");
+            winloseScreenFkt();
             winloseScreen.innerHTML = `<h1>You Lose!</h1> <h2>Your Score was: ${score}</h2> <h3>Please enter your name</h3> <input type="text" id="highscoreName" name="name" placeholder="Your Name" onclick="this.select();">`;
-            const input: HTMLElement = document.getElementById("highscoreName");
-            document.onkeydown = (e) => {
-                if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).code === "ENTER") {
-                    highscoreName = (<HTMLInputElement>input).value.toString();
-                    document.onkeydown = (e) => {
-                        if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).code === "ENTER") {
-                            reset();
-                        };
-                    };
-                }
-            };
-
         } else if (score === 1000) {
-            clearInterval(enemieInterval);
-            canvasDiv.setAttribute("style", "display: none;");
-            winloseScreen.setAttribute("style", "display: block;");
+            clearInterval(drawInterval);
             winloseScreen.innerHTML = `<h1>You Win!</h1> <h2>Your Score was: ${score}</h2> <h3>Please enter your name</h3> <input type="text" id="highscoreName" name="name" placeholder="Your Name" onclick="this.select();">`;
-            const input: HTMLElement = document.getElementById("highscoreName");
-            document.onkeydown = (e) => {
-                if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).code === "ENTER") {
-
-                    highscoreName = (<HTMLInputElement>input).value.toString();
-                    document.onkeydown = (e) => {
-                        if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).code === "ENTER") {
-                            reset();
-                        };
-                    };
-                }
-            };
-            gameStatus = false;
+            winloseScreenFkt();
         } else {
             draw();
             scoreH2.innerText = "Score: " + score;
         }
+        console.log(gameStatus);
     });
+
+    startEnemieInterval();
+
+
+}
+
+function startEnemieInterval() {
 
     let enemieInterval = setInterval(() => {
         if (!gameStatus) {
             clearInterval(enemieInterval);
         } else if (score === 1000) {
             clearInterval(enemieInterval);
-            gameStatus = false;
         } else {
             createEnemy();
-            if (score % 50 === 0 && score != 0) {
-                enemieIntervalTimer *= 0.7;
-            }
+            clearInterval(enemieInterval);
+            startEnemieInterval();
         }
-    }, enemieIntervalTimer * (1 - (score / 1000 * 3)));
+
+        console.log(enemieIntervalTimer);
+
+
+    }, enemieIntervalTimer);
 }
 
 // ========== Function-Call ========== //
@@ -315,10 +312,12 @@ function reset() {
         everageHighscoreName = highscoreName;
     }
     gameStatus = true;
+    enemieIntervalTimer = 3000;
     score = 0;
     enemies = [];
     shots = [];
     player = [];
+    playerHeight = canvasHeight * 0.5;
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx2.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx3.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -330,11 +329,48 @@ function reset() {
 
 }
 
+function difficulty(difficulty: string) {
+    switch (difficulty) {
+        case "easy":
+            speed = 1;
+            break;
+        case "medium":
+            speed = 1.5;
+            break;
+        case "hard":
+            speed = 2;
+            break;
+        case "extreme":
+            speed = 3;
+            break;
+    }
+    difficultyText.innerText = "Difficulty: " + difficulty;
+
+}
+
+function winloseScreenFkt() {
+    enemies.splice(gameStatus[1], 1);
+    canvasDiv.setAttribute("style", "display: none;");
+    winloseScreen.setAttribute("style", "display: block;");
+    const input: HTMLElement = document.getElementById("highscoreName");
+    document.onkeydown = (e) => {
+        if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).code === "ENTER") {
+            highscoreName = (<HTMLInputElement>input).value.toString();
+            highscoreName === "" ? highscoreName = "Player" : highscoreName = highscoreName;
+            document.onkeydown = (e) => {
+                if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).code === "ENTER") {
+                    reset();
+                };
+            };
+        }
+    };
+}
 
 function burgermenu() {
     menu.setAttribute("onclick", "wiederweg()");
     button.setAttribute("style", "display: none;");
     menu.setAttribute("style", "display: block;");
+    outer.setAttribute("onclick", "wiederweg()");
 
     window.setTimeout(function () {
 
@@ -348,5 +384,6 @@ function wiederweg() {
     menu.style.display = 'none';
 
     menu.removeAttribute("onclick");
+    outer.removeAttribute("onclick");
     button.setAttribute("style", "display: block;");
 }

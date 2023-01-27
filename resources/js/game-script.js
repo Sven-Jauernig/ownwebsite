@@ -1,13 +1,17 @@
 // ========== Settings ========== //
 var canvas = document.getElementById('board'), ctx = canvas.getContext('2d'), ctx2 = canvas.getContext('2d'), ctx3 = canvas.getContext('2d');
-var canvasWidth = innerWidth * 0.9, canvasHeight = innerHeight * 0.9, scoreH2 = document.getElementById("score"), startButton = document.getElementById("startButton"), startDiv = document.getElementById("startDiv"), canvasDiv = document.getElementById("canvasDiv"), winloseScreen = document.getElementById("winloseScreen"), highscoreHTML = document.querySelector("body .outer .inner ul li h3"), menu = document.getElementById("menu"), nav = document.getElementById("nav"), button = document.getElementById("burger");
+var canvasWidth = innerWidth * 0.9, canvasHeight = innerHeight * 0.9, scoreH2 = document.getElementById("score"), startButton = document.getElementById("startButton"), startDiv = document.getElementById("startDiv"), canvasDiv = document.getElementById("canvasDiv"), winloseScreen = document.getElementById("winloseScreen"), highscoreHTML = document.querySelector("body .outer .inner ul li h3"), easyButton = document.getElementById("difficultyEasy"), mediumButton = document.getElementById("difficultyMedium"), hardButton = document.getElementById("difficultyHard"), extremeButton = document.getElementById("difficultyExtreme"), difficultyText = document.querySelector(".outer .inner details summary h2"), menu = document.getElementById("menu"), nav = document.getElementById("nav"), outer = document.getElementById("outer"), button = document.getElementById("burger");
 startButton.addEventListener("click", start);
 button.addEventListener("click", burgermenu);
+easyButton.addEventListener("click", function () { difficulty("easy"); });
+mediumButton.addEventListener("click", function () { difficulty("medium"); });
+hardButton.addEventListener("click", function () { difficulty("hard"); });
+extremeButton.addEventListener("click", function () { difficulty("extreme"); });
 ctx.canvas.width = canvasWidth;
 ctx.canvas.height = canvasHeight;
 ctx2.canvas.width = canvasWidth;
 ctx2.canvas.height = canvasHeight;
-var gameStatus = true, enemieIntervalTimer = 3000, score = 0, playerHeight = 0.5 * canvasHeight, enemies = [], shots = [], player = [], highscoreName = "Name", everageHighscoreName = "", highscore = 0;
+var gameStatus = true, enemieIntervalTimer = 3000, score = 998, speed = 1, playerHeight = 0.5 * canvasHeight, enemies = [], shots = [], player = [], highscoreName = "Name", everageHighscoreName = "", highscore = 0;
 // ========== Player ========== //
 function createPlayer() {
     var newPlayer = new Player();
@@ -37,11 +41,11 @@ var Player = /** @class */ (function () {
 }());
 // ========== Enemies ========== //
 function createEnemy() {
-    var size = Math.floor(Math.random() * (50) + 20), newEnemy = new Enemy(Math.floor(Math.random() * (canvasHeight)), size);
+    var size = Math.floor(Math.random() * (50) + 20), newEnemy = new Enemy(Math.floor(Math.random() * (canvasHeight)), size, speed);
     enemies.push(newEnemy);
 }
 var Enemy = /** @class */ (function () {
-    function Enemy(yPos, size) {
+    function Enemy(yPos, size, speed) {
         this.enemyUpdate = function () {
             this.enemyColider();
             this.enemyMove();
@@ -74,6 +78,7 @@ var Enemy = /** @class */ (function () {
                                 enemies.splice(j, 1);
                                 shots.splice(i, 1);
                                 score += 1;
+                                enemieIntervalTimer *= (1 - (score / 1000));
                             }
                         }
                     }
@@ -84,7 +89,7 @@ var Enemy = /** @class */ (function () {
         this.isHit = false;
         this.yPos = yPos;
         this.size = size;
-        this.speed = -1;
+        this.speed = -speed;
     }
     return Enemy;
 }());
@@ -142,63 +147,52 @@ function draw() {
 function startInterval() {
     var drawInterval = setInterval(function () {
         if (!gameStatus) {
-            enemies.splice(gameStatus[1], 1);
             clearInterval(drawInterval);
-            canvasDiv.setAttribute("style", "display: none;");
-            winloseScreen.setAttribute("style", "display: block;");
-            winloseScreen.innerHTML = "<h1>You Lose!</h1> <h2>Your Score was: ".concat(score, "</h2> <h3>Please enter your name</h3> <input type=\"text\" id=\"highscoreName\" name=\"name\" placeholder=\"Your Name\" onclick=\"this.select();\">");
-            var input_1 = document.getElementById("highscoreName");
-            document.onkeydown = function (e) {
-                if (e.key === 'Enter' || e.code === "ENTER") {
-                    highscoreName = input_1.value.toString();
-                    document.onkeydown = function (e) {
-                        if (e.key === 'Enter' || e.code === "ENTER") {
-                            reset();
-                        }
-                        ;
-                    };
-                }
-            };
+            winloseScreenFkt();
+            // winloseScreen.innerHTML = `<h1>You Lose!</h1> <h2>Your Score was: ${score}</h2> <h3>Please enter your name</h3> <input type="text" id="highscoreName" name="name" placeholder="Your Name" onclick="this.select();">`;
         }
         else if (score === 1000) {
-            clearInterval(enemieInterval);
-            canvasDiv.setAttribute("style", "display: none;");
-            winloseScreen.setAttribute("style", "display: block;");
+            clearInterval(drawInterval);
+            // canvasDiv.setAttribute("style", "display: none;");
+            // winloseScreen.setAttribute("style", "display: block;");
             winloseScreen.innerHTML = "<h1>You Win!</h1> <h2>Your Score was: ".concat(score, "</h2> <h3>Please enter your name</h3> <input type=\"text\" id=\"highscoreName\" name=\"name\" placeholder=\"Your Name\" onclick=\"this.select();\">");
-            var input_2 = document.getElementById("highscoreName");
-            document.onkeydown = function (e) {
-                if (e.key === 'Enter' || e.code === "ENTER") {
-                    highscoreName = input_2.value.toString();
-                    document.onkeydown = function (e) {
-                        if (e.key === 'Enter' || e.code === "ENTER") {
-                            reset();
-                        }
-                        ;
-                    };
-                }
-            };
-            gameStatus = false;
+            winloseScreenFkt();
+            // const input: HTMLElement = document.getElementById("highscoreName");
+            // document.onkeydown = (e) => {
+            //     if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).code === "ENTER") {
+            //         highscoreName = (<HTMLInputElement>input).value.toString();
+            //         highscoreName === "" ? highscoreName = "Player" : highscoreName = highscoreName;
+            //         document.onkeydown = (e) => {
+            //             if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).code === "ENTER") {
+            //                 reset();
+            //             };
+            //         };
+            //     }
+            // };
         }
         else {
             draw();
             scoreH2.innerText = "Score: " + score;
         }
+        console.log(gameStatus);
     });
+    startEnemieInterval();
+}
+function startEnemieInterval() {
     var enemieInterval = setInterval(function () {
         if (!gameStatus) {
             clearInterval(enemieInterval);
         }
         else if (score === 1000) {
             clearInterval(enemieInterval);
-            gameStatus = false;
         }
         else {
             createEnemy();
-            if (score % 50 === 0 && score != 0) {
-                enemieIntervalTimer *= 0.7;
-            }
+            clearInterval(enemieInterval);
+            startEnemieInterval();
         }
-    }, enemieIntervalTimer * (1 - (score / 1000 * 3)));
+        console.log(enemieIntervalTimer);
+    }, enemieIntervalTimer);
 }
 // ========== Function-Call ========== //
 function start() {
@@ -237,10 +231,12 @@ function reset() {
         everageHighscoreName = highscoreName;
     }
     gameStatus = true;
+    enemieIntervalTimer = 3000;
     score = 0;
     enemies = [];
     shots = [];
     player = [];
+    playerHeight = canvasHeight * 0.5;
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx2.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx3.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -250,10 +246,46 @@ function reset() {
     startButton.addEventListener("click", start);
     nav.setAttribute("style", "display: flex;");
 }
+function difficulty(difficulty) {
+    switch (difficulty) {
+        case "easy":
+            speed = 1;
+            break;
+        case "medium":
+            speed = 1.5;
+            break;
+        case "hard":
+            speed = 2;
+            break;
+        case "extreme":
+            speed = 3;
+            break;
+    }
+    difficultyText.innerText = "Difficulty: " + difficulty;
+}
+function winloseScreenFkt() {
+    enemies.splice(gameStatus[1], 1);
+    canvasDiv.setAttribute("style", "display: none;");
+    winloseScreen.setAttribute("style", "display: block;");
+    var input = document.getElementById("highscoreName");
+    document.onkeydown = function (e) {
+        if (e.key === 'Enter' || e.code === "ENTER") {
+            highscoreName = input.value.toString();
+            highscoreName === "" ? highscoreName = "Player" : highscoreName = highscoreName;
+            document.onkeydown = function (e) {
+                if (e.key === 'Enter' || e.code === "ENTER") {
+                    reset();
+                }
+                ;
+            };
+        }
+    };
+}
 function burgermenu() {
     menu.setAttribute("onclick", "wiederweg()");
     button.setAttribute("style", "display: none;");
     menu.setAttribute("style", "display: block;");
+    outer.setAttribute("onclick", "wiederweg()");
     window.setTimeout(function () {
         menu.style.opacity = '1';
     }, 0);
@@ -262,5 +294,6 @@ function wiederweg() {
     menu.style.opacity = '0';
     menu.style.display = 'none';
     menu.removeAttribute("onclick");
+    outer.removeAttribute("onclick");
     button.setAttribute("style", "display: block;");
 }

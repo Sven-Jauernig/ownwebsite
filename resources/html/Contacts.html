@@ -30,12 +30,24 @@
             </div>
         </div>
     </nav>
-    <div class="outer">
+    <div class="outer" id="outer">
         <div class="inner" id="startDiv">
-            <h1>Game-Name</h1>
+            <h1 class="gameName">Game-Name</h1>
             <button id="startButton">
                 <h1>Start Game</h1>
             </button>
+
+            <!-- <a href="#">Difficulty</a> -->
+            <details>
+                <summary><h2>Difficulty</h2></summary>
+                <div>
+                    <button class="difficulty" id="difficultyEasy">easy</button>
+                    <button class="difficulty" id="difficultyMedium">medium</button>
+                    <button class="difficulty" id="difficultyHard">hard</button>
+                    <button class="difficulty" id="difficultyExtreme">extreme</button>
+                </div>
+
+            </details>
 
             <h2>High-Score:</h2>
             <ul>
