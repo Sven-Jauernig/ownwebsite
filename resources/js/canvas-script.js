@@ -5,8 +5,12 @@ var circles = [];
 
 const WIDTH = innerWidth * 0.9;
 const HEIGHT = innerHeight * 0.9;
+const button = document.getElementById("burger");
+const menu = document.getElementById("menu");
 ctx.canvas.width = WIDTH;
 ctx.canvas.height = HEIGHT;
+
+burger.addEventListener("click", burgermenu);
 
 
 createCircle();
@@ -74,5 +78,25 @@ function draw() {
 }
 
 function returnRandom(min, max) {
-     return Math.floor(Math.random() * (max - min + 1) + min); 
-    }
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function burgermenu() {
+    menu.setAttribute("onclick", "wiederweg()");
+    button.setAttribute("style", "display: none;");
+    menu.setAttribute("style", "display: block;");
+
+    window.setTimeout(function () {
+
+        menu.style.opacity = '1';
+
+    }, 0);
+}
+
+function wiederweg() {
+    menu.style.opacity = '0';
+    menu.style.display = 'none';
+
+    menu.removeAttribute("onclick");
+    button.setAttribute("style", "display: block;");
+}

@@ -4,23 +4,58 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
+    <title>Game</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='../css/game-style.css'>
     <script src='../js/game-script.js' defer></script>
 </head>
 
 <body>
+    <nav id="nav">
+        <div class="nav-left">
+            <a href="../../index.html"><img src="../images/logo.png" alt=""></a>
+            <h1 id="address">Game :D</h1>
+        </div>
+
+        <div class="nav-right">
+            <div class="button" id="burger"></div>
+            <div class="placeholder"></div>
+            <div class="menu" id="menu">
+                <ul>
+                    <li><a class="menuItem" href="../../index.html">Home</a></li>
+                    <li><a class="menuItem" href="../html/Profile.html">bouncing-Ball</a></li>
+                    <li><a class="menuItem" href="../html/About.html">About</a></li>
+                    <li><a class="menuItem" href="#">Game</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="outer">
-    <div class="inner" id="startDiv">
-        <h1>Game-Name</h1>
-        <button id="startButton"><h2>Start Game</h2></button>
+        <div class="inner" id="startDiv">
+            <h1>Game-Name</h1>
+            <button id="startButton">
+                <h1>Start Game</h1>
+            </button>
+
+            <h2>High-Score:</h2>
+            <ul>
+                <li>
+                    <h3></h3>
+                </li>
+            </ul>
+        </div>
+        <div id="canvasDiv">
+            <h2 id="score">Score: 1</h2>
+            <canvas id="board"></canvas>
+
+        </div>
+        <div id="winloseScreen">
+            <h1>You Win!</h1>
+            <h2>Your Score was: 0</h2>
+            <h3>Please enter your name</h3>
+        </div>
     </div>
-    <canvas id="board"><canvas id="board2"></canvas></canvas>
-    
 
-
-</div>
 
 </body>
 
